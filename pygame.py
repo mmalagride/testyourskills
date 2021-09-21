@@ -75,7 +75,11 @@ class MyGame(ShowBase):
     def refreshTerrain(self):
         self.terrain.removeNode()
         self.playerNode.removeNode()
+        self.targetNode.removeNode()
+        self.mouseOverNode.removeNode()
         self.terrain = self.generateTerrain()
+        self.mouseOverNode = render.attachNewNode("mouseOver")
+        self.targetNode = render.attachNewNode("target")
         self.playerNode = self.placeCharacter(self.terrain.getChild(1))
 
     def clickTile(self):
@@ -96,8 +100,8 @@ class MyGame(ShowBase):
                 pickedObject.setColor(1.0, 0.6, 0.0, 1.0)
                 pickedObject.setTag('descriptor','target')  
                 player = self.playerNode.getChild(0).getPos()
-                print("Origin: (%s, %s)" % (int(player.y),int(player.x)))        
-                print("Target: (%s, %s)" % (int(pickedObject.getPos().y),int(pickedObject.getPos().x)))
+                print("Origin: (%s, %s)" % (int(player.x),int(player.y)))        
+                print("Target: (%s, %s)" % (int(pickedObject.getPos().x),int(pickedObject.getPos().y)))
                 #Start PathFinding Loop
 
     def mouseOver(self, task):
