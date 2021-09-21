@@ -1,1 +1,6 @@
 https://github.com/SebLague/Procedural-Cave-Generation/blob/master/Episode%2001/MapGenerator.cs
+
+
+#For More Pathfinding!
+http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
+https://github.com/zephirdeadline/astar_python/blob/0e56e89973a4aedff9452be372404a9c2672baa8/astar_python/astar.py#L33

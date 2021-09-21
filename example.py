@@ -72,19 +72,26 @@ class MazeSolver(AStar):
             self.lines.append(''.join(map(str,line)))
         self.width = len(self.lines[0])
         self.height = len(self.lines)
+        self.heuristic = 0.0
 
     def heuristic_cost_estimate(self, n1, n2):
-        """computes the 'direct' distance between two (x,y) tuples"""
-        (x1, y1) = n1
-        (x2, y2) = n2
-        dx = abs(x2 - x1)
-        dy = abs(y2 - y1)
-        minimum = min(dx,dy)
-        distances1 = ((dx + dy) + (math.sqrt(2) - 2) *  min(dx,dy)) #octile distance
-        distances2 = (dx + dy) - min(dx,dy)                         #Chebyshev distance
-        distances3 = dx + dy                                        #Manhatten distance                  
+        (x1, y1) = n1 #start
+        (x2, y2) = n2 #end
+        dx = abs(x2 - x1) * 10
+        dy = abs(y2 - y1) * 10
+        hx = dx + dy  
+
+        dx1 = x1 - x2
+        dy1 = y1 - y2
+        dx2 = Origin[0] - x2
+        dy2 = Origin[1] - y2
+        cross = abs(dx1*dy2 - dx2*dy1)
+        self.heuristic += cross*0.001
+        #distances1 = ((dx + dy) + (math.sqrt(2) - 2) *  min(dx,dy)) #octile distance
+        #distances2 = (dx + dy) - min(dx,dy)                         #Chebyshev distance
+        #distances3 = dx + dy                                        #Manhatten distance                  
         #return ((dx + dy) + (math.sqrt(2) - 2) *  min(dx,dy))
-        return distances3
+        return self.heuristic
  
         #return abs(x2 - x1), abs(y2 - y1)
         #return math.hypot(x2 - x1, y2 - y1)
@@ -101,15 +108,14 @@ class MazeSolver(AStar):
 generator = MapGenerator()
 terrainMap = generator.createMap()
 tempMap = terrainMap
-
 Origin = (20, 0)
-Target = (6, 18)
+Target = (7, 18)
 #path = generator.aStarSearch(terrainMap,Origin,Target)
 thing = MazeSolver(tempMap).astar(Origin, Target)
 foundPath = list(MazeSolver(tempMap).astar(Origin, Target))
 for path in foundPath:
     tempMap[path[0]][path[1]] = "P"
 tempMap[0][20] = 'S'
-tempMap[6][18] = 'E'
+tempMap[6][17] = 'E'
 generator.printMatrix(tempMap)
 pass
