@@ -109,7 +109,7 @@ class MyGame(ShowBase):
         if not(self.controlPlayer["indicatorValue"]):
             dt = globalClock.getDt()
             self.playerTimer += dt
-            if self.playerTimer > 0.20:
+            if self.playerTimer > 0.01:
                 self.playerTimer = 0.0
                 print("Travelling from:    " + str((int(self.playerNode.getChild(0).getPos().x),int(self.playerNode.getChild(0).getPos().y))))
                 print("Travelling through: " + ', '.join(str(e) for e in self.playerDirection[:-1]))
