@@ -1,5 +1,6 @@
 from pandas import DataFrame
 from astar import AStar
+import numpy as np
 import math
 import random
 
@@ -74,48 +75,46 @@ class MazeSolver(AStar):
         self.height = len(self.lines)
         self.heuristic = 0.0
 
-    def heuristic_cost_estimate(self, n1, n2):
-        (x1, y1) = n1 #start
-        (x2, y2) = n2 #end
-        dx = abs(x2 - x1) * 10
-        dy = abs(y2 - y1) * 10
-        hx = dx + dy  
-
-        dx1 = x1 - x2
-        dy1 = y1 - y2
-        dx2 = Origin[0] - x2
-        dy2 = Origin[1] - y2
+    def heuristic_cost_estimate(self, current, goal):
+        dx1 = current[0] - goal[0]
+        dy1 = current[1] - goal[1]
+        dx2 = Origin[0] - goal[0]
+        dy2 = Origin[1] - goal[1]
         cross = abs(dx1*dy2 - dx2*dy1)
         self.heuristic += cross*0.001
-        #distances1 = ((dx + dy) + (math.sqrt(2) - 2) *  min(dx,dy)) #octile distance
-        #distances2 = (dx + dy) - min(dx,dy)                         #Chebyshev distance
-        #distances3 = dx + dy                                        #Manhatten distance                  
-        #return ((dx + dy) + (math.sqrt(2) - 2) *  min(dx,dy))
         return self.heuristic
- 
-        #return abs(x2 - x1), abs(y2 - y1)
-        #return math.hypot(x2 - x1, y2 - y1)
+
+    #def heuristic_cost_estimate(self, current, goal):
+    #    dx = abs(current[0] - goal[0])
+    #    dy = abs(current[1] - goal[1])        
+    #    return max(dx, dy)
+
+    #def heuristic_cost_estimate(self, current, goal):
+    #    return np.linalg.norm(np.array(goal) - current)
 
     def distance_between(self, n1, n2):
         """this method always returns 1, as two 'neighbors' are always adajcent"""
         return 1
 
     def neighbors(self, node):
-        x, y = node
-        return[(nx, ny) for nx, ny in[(x, y - 1), (x, y + 1), (x - 1, y), (x + 1, y), (x - 1, y - 1), (x - 1, y + 1), (x + 1, y - 1), (x + 1, y + 1)]if 0 <= nx < self.width and 0 <= ny < self.height and self.lines[ny][nx] == '0']
+        neighbourhood = [[-1, -1],[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0]]
+        neighbours = [(node[0] + offset[0], node[1] + offset[1]) for offset in neighbourhood]
+        validNeighbours = []
+        for nx, ny in neighbours:
+            if (0 <= nx < self.width) and (0 <= ny < self.width) and self.lines[nx][ny] == '0':
+                validNeighbours.append((nx,ny))
+        return validNeighbours
 
 
 generator = MapGenerator()
 terrainMap = generator.createMap()
 tempMap = terrainMap
-Origin = (20, 0)
-Target = (7, 18)
+Origin = (15, 0)
+Target = (15, 2)
 #path = generator.aStarSearch(terrainMap,Origin,Target)
 thing = MazeSolver(tempMap).astar(Origin, Target)
 foundPath = list(MazeSolver(tempMap).astar(Origin, Target))
 for path in foundPath:
     tempMap[path[0]][path[1]] = "P"
-tempMap[0][20] = 'S'
-tempMap[6][17] = 'E'
 generator.printMatrix(tempMap)
 pass
