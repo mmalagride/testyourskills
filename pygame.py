@@ -32,7 +32,8 @@ class MyGame(ShowBase):
         
         self.controlPlayer = DirectCheckButton(text="Move Character", scale=.05, command=self.beginPathFinding, pos=(-1, -1, 0))
 
-        self.playerTimer = 0.0        
+        self.playerIsWalking = False
+        self.playerStepTimer = 0.0        
         self.playerNode = self.placeCharacter(self.terrain.getChild(1))
         self.playerDirection = []
         self.playerDestination = ()
@@ -108,12 +109,10 @@ class MyGame(ShowBase):
     def playerMove(self,task):
         if not(self.controlPlayer["indicatorValue"]):
             dt = globalClock.getDt()
-            self.playerTimer += dt
-            if self.playerTimer > 0.01:
-                self.playerTimer = 0.0
-                print("Travelling from:    " + str((int(self.playerNode.getChild(0).getPos().x),int(self.playerNode.getChild(0).getPos().y))))
-                print("Travelling through: " + ', '.join(str(e) for e in self.playerDirection[:-1]))
-                print("Travelling to:      " + str((int(self.targetNode.getChild(0).getPos().x),int(self.targetNode.getChild(0).getPos().y))))
+            self.playerStepTimer += dt
+            if self.playerStepTimer > 0.10:
+                self.playerIsWalking = True
+                self.playerStepTimer = 0.0
                 if self.pathNode.getChildren().getNumPaths() > 0: 
                     self.playerNode.getChild(0).setColor(1.0, 1.0, 1.0, 1.0)                   
                     self.playerNode.getChild(0).setTag('descriptor', 'floor')
@@ -128,8 +127,8 @@ class MyGame(ShowBase):
                     self.targetNode.getChild(0).setColor(0.0, 0.8, 0.0, 1.0)
                     self.targetNode.getChild(0).setTag('descriptor', 'player')
                     self.targetNode.getChild(0).reparentTo(self.playerNode)
+                    self.playerIsWalking = False
                     return task.done
-                print("")
             return task.cont
         else:
             return task.done
